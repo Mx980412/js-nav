@@ -107,21 +107,28 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 var $siteList = $(".siteList");
 var $lastLi = $siteList.find("li.last");
 var x = localStorage.getItem("x");
-var xObject = JSON.parse(x);
+var xObject = JSON.parse(x); //字符串变对象
+
+//初始化hashMap（生成结构）
 var hashMap = xObject || [{ logo: "A", url: "https://www.acfun.cn" }, { logo: "B", url: "https://www.bilibili.com" }];
+
+//简化url
 var simplifyUrl = function simplifyUrl(url) {
-  return url.replace("https://", "").replace("http://", "").replace("www.", "").replace(/\/.*/, ""); // 删除 / 开头的内容
+  return url.replace("https://", "").replace("http://", "").replace("www.", "").replace(/\/.*/, ""); //删除 / 开头的内容
 };
 
+//创建站点
 var render = function render() {
-  $siteList.find("li:not(.last)").remove();
+  $siteList.find("li:not(.last)").remove(); //清空新增网站之前的节点
   hashMap.forEach(function (node, index) {
-    var $li = $("<li>\n                <div class=\"site\">\n                   <div class=\"logo\">" + node.logo + "</div>\n                     <div class=\"link\"> " + simplifyUrl(node.url) + " </div>\n                     <div class='close'>\n                    <svg class=\"icon\">\n                   <use xlink:href=\"#icon-close\"></use>\n                </svg>\n          </div>\n      </div>\n    </li>").insertBefore($lastLi);
+    var $li = $("<li>\n      <div class=\"site\">\n        <div class=\"logo\">" + node.logo + "</div>\n        <div class=\"link\"> " + simplifyUrl(node.url) + " </div>\n        <div class='close'>\n          <svg class=\"icon\">\n            <use xlink:href=\"#icon-close\"></use>\n          </svg>\n        </div>\n      </div>\n    </li>").insertBefore($lastLi);
+    //点击跳转页面
     $li.on("click", function () {
       window.open(node.url);
     });
+    //删除功能
     $li.on("click", ".close", function (e) {
-      e.stopPropagation(); //阻止冒泡
+      e.stopPropagation(); //阻止close冒泡
       hashMap.splice(index, 1);
       render();
     });
@@ -129,8 +136,9 @@ var render = function render() {
 };
 render();
 
+//用户输入新增网站（及纠正用户的错误）
 $(".addButton").on("click", function () {
-  var url = window.prompt("请问你要添加的网站是啥？");
+  var url = window.prompt("请问你要添加的网站是啥？"); //显示对话框
   if (url.indexOf("http") !== 0) {
     url = "https://" + url;
   }
@@ -142,13 +150,15 @@ $(".addButton").on("click", function () {
   render();
 });
 
+//当前的hashMap存到localStorage（用户关闭页面之前触发）
 window.onbeforeunload = function () {
-  var string = JSON.stringify(hashMap);
+  var string = JSON.stringify(hashMap); //对象变字符串
   localStorage.setItem("x", string);
 };
 
+//键盘事件
 $(document).on("keypress", function (e) {
-  var key = e.key;
+  var key = e.key; //key=e.key的简写
 
   for (var i = 0; i < hashMap.length; i++) {
     if (hashMap[i].logo.toLowerCase() === key) {
@@ -157,4 +167,4 @@ $(document).on("keypress", function (e) {
   }
 });
 },{}]},{},["epB2"], null)
-//# sourceMappingURL=main.deccda63.map
+//# sourceMappingURL=main.e467afef.map
